@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SVG-Editor</title>
+</head>
+<style>
+    html,body{
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+    }
+    .left-nav fieldset{
+        border: none;
+    }
+    form:not(:last-child){
+        border-bottom: 1px solid gray;
+    }
+    #canvas{
+        width: 80%;
+        height: 100%;
+        overflow: hidden;
+        box-shadow: inset 0 0 10px 10px #ddd;
+    }
+    #canvas p{
+        margin-left: 20px;
+    }
+    label[name='result']{
+        margin-left: 0.5em;
+    }
+</style>
+<body>
+    <div class="left-nav">
+        <fieldset>
+            <form id="svg-shape">
+                <h2>形状</h2>
+                <p>
+                    <button value="line">line</button>
+                    <button value="rect">rect</button>
+                    <button value="circle">circle</button>
+                    <button value="ellipse">ellipse</button>
+                </p>
+            </form>
+            <form id="svg-style">
+                <p>请先创建形状</p>
+            </form>
+            <form id="svg-color">
+                <h2>颜色</h2>
+                <p><label for="">边框颜色&nbsp;</label><input id="color-stroke" name="stroke" type="color" value="#000000"><label name="result"></label></p>
+                <p><label for="">填充颜色&nbsp;</label><input id="color-fill" name="fill" type="color" value="#ffffff"><label name="result"></label></p>
+            </form>
+            <form id="svg-transform">
+                <h2>转换</h2>
+                <p><label for="">translateX&nbsp;</label><input name="translateX" type="range" min="-300" max="300" defaultValue="0"><label name="result"></label></p>
+                <p><label for="">translateY&nbsp;</label><input name="translateY" type="range" min="-300" max="300" defaultValue="0"><label name="result"></label></p>
+                <p><label for="">rotate&nbsp;</label><input name="rotate" type="range" min="-180" max="180" defaultValue="0"><label name="result"></label></p>
+                <p><label for="">scale&nbsp;</label><input name="scale" type="range" min="0" max="2" defaultValue="1" step="0.1"><label name="result"></label></p>
+            </form>
+            <form action="">
+                <h2>命令</h2>
+                <button id="remove">删除</button>
+            </form>
+        </fieldset>
+    </div>
+    <div id="canvas">
+        <p id="donghua">动画</p>
+        <p>
+            <label for="">类型</label>
+            <select name="" id="animateType">
+                <option value="blinds">百叶窗</option>
+            </select>
+            <label for="">方向</label>
+            <select name="" id="direction">
+                <option value="horizontal">水平方向</option>
+                <option value="vertical">竖直方向</option>
+            </select>
+            <label for="时间"></label><input type="number" id="duration" value="1">
+            <button id="run">run</button>
+        </p>
+    </div>
+</body>
+<script src="./lib/TweenMax.min.js"></script>
+<script src="./lib/animate.js"></script>
+<script>
+    var SVG_NS = "http://www.w3.org/2000/svg",
+        shape_form = document.getElementById("svg-shape"),
+        style_form = document.getElementById("svg-style"),
+        color_form = document.getElementById("svg-color"),
+        transform_form = document.getElementById("svg-transform"),
+        canvas = document.querySelector("#canvas"),
+        color_fill = document.getElementById("color-fill"),
+        color_stroke = document.getElementById("color-stroke"),
+        remove = document.getElementById("remove"),
+        run = document.getElementById("run"),
+        curShape = null;
+
+    var shapeInfo = {
+        "line": {x1: "200", y1: "300", x2: "400", y2: "300"},
+        "rect": {x: "200", y: "250", width: "200", height: "100"},
+        "circle": {cx: "300", cy: "300", r: "50"},
+        "ellipse": {cx: "300", cy: "300", rx: "100", ry: "50"}
+    };
+
+    var defaultAttr = {
+        stroke: "#000000",
+        fill: "#0000ff"
+    };
+
+    var svg = createSVG();
+
+    shape_form.addEventListener('click', function(e){
+        if(e.target.tagName.toLowerCase() == "button"){
+            createShape(e.target.value);
+        }
+        e.preventDefault();
+    });
+
+    [style_form, color_form, transform_form].forEach(function(f){
+        f.addEventListener('input', function(e){
+            if(e.target.tagName.toLowerCase() == "input"){
+                e.target.nextSibling.textContent = e.target.value;
+                if(!curShape) return;
+                if(f == transform_form){
+                    curShape.setAttribute('transform', getTransform());
+                }else{
+                    curShape.setAttribute(e.target.getAttribute('name'), e.target.value);
+                }
+            }
+            e.preventDefault();
+        });
+    });
+
+    svg.addEventListener('click', function(e){
+        if(e.target.tagName.toLowerCase() in shapeInfo){
+            select(e.target);
+        }
+    });
+    remove.addEventListener('click', function(e){
+        curShape.parentNode.remove();
+        e.preventDefault();
+    });
+    run.addEventListener('click', function(e){
+        if(curShape){
+            var dir = document.getElementById("direction").value;
+            var dur = document.getElementById("duration").value;
+            Animate.blinds(curShape, {direction: dir, duration: dur});
+        }
+        e.preventDefault();
+    });
+
+    function createStyleForm(shapeName){
+        style_form.innerHTML = "<h2>样式</h2>";
+        for (var a in shapeInfo[shapeName]){
+            var p = document.createElement('p');
+            p.innerHTML = "<label for=''>"+a+"&nbsp;</label><input name='"+a+"' type='range' min='0' max='600'><label name='result'></label>";
+            style_form.appendChild(p);
+        }
+    }
+
+    function createSVG(){
+        var svg = document.createElementNS(SVG_NS, 'svg');
+        svg.setAttribute("width", "100%");
+        svg.setAttribute("height", "100%");
+        svg.setAttribute("viewBox", "0 0 600 600");
+        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+        canvas.appendChild(svg);
+        svg.addEventListener("click", function(e){
+            if(e.target.tagName.toLowerCase() in shapeInfo){
+                select(e.target);
+            }
+        });
+        return svg;
+    }
+        
+    function createShape(shapeName){
+        var sp = document.createElementNS(SVG_NS, shapeName);
+        var svgEl = document.createElementNS(SVG_NS, 'svg');
+        for(attr in shapeInfo[shapeName]){
+            sp.setAttribute(attr, shapeInfo[shapeName][attr]);
+        }
+        sp.setAttribute("fill", defaultAttr.fill);
+        sp.setAttribute("stroke", defaultAttr.stroke);
+        svgEl.appendChild(sp);
+        svg.appendChild(svgEl);
+        createStyleForm(shapeName);
+        select(sp);
+    }
+    function select(shape){
+        curShape = shape;
+        createStyleForm(shape.tagName);
+        updateSet(shape);
+    }
+    function updateSet(shape){
+        [].map.call(document.getElementsByTagName("input"), function(i){
+            var name = i.getAttribute('name');
+            if(shape.getAttribute(name)){
+                i.value = shape.getAttribute(name);
+                i.nextSibling.textContent = shape.getAttribute(name);
+            }
+        });
+    }
+    function getTransform(shape){
+        var tx = transform_form.querySelector("[name='translateX']").value;
+        var ty = transform_form.querySelector("[name='translateY']").value;
+        var rotate = transform_form.querySelector("[name='rotate']").value;
+        var scale = transform_form.querySelector("[name='scale']").value;
+        return "translate(" + tx + "," + ty + ")" + " rotate(" + rotate + ") " + "scale(" + scale + ")";
+    }
+</script>
+</html>
