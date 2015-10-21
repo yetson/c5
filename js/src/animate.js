@@ -20,7 +20,7 @@ var Animate = {
                 my = svgEl.getBBox().y,
                 mask = "<mask id='"+ maskId +"' width='"+svgWidth+"' height='"+svgHeight+"'>",
                 maskDefs = document.createElementNS(SVG_NS, 'defs'),
-                cnt = 0, 
+                cnt = 0,
                 dx, dy, px, py;
             if(direction == "horizontal"){
                 dy = svgHeight / SLICE;
