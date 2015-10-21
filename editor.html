@@ -82,8 +82,9 @@
         </p>
     </div>
 </body>
-<script src="./lib/TweenMax.min.js"></script>
-<script src="./lib/animate.js"></script>
+<!-- <script src="./js/lib/TweenMax.min.js"></script>
+<script src="./js/animate.js"></script> -->
+<script src="./js/dist/all.js"></script>
 <script>
     var SVG_NS = "http://www.w3.org/2000/svg",
         shape_form = document.getElementById("svg-shape"),
@@ -174,7 +175,7 @@
         });
         return svg;
     }
-        
+
     function createShape(shapeName){
         var sp = document.createElementNS(SVG_NS, shapeName);
         var svgEl = document.createElementNS(SVG_NS, 'svg');
@@ -196,18 +197,26 @@
     function updateSet(shape){
         [].map.call(document.getElementsByTagName("input"), function(i){
             var name = i.getAttribute('name');
-            if(shape.getAttribute(name)){
-                i.value = shape.getAttribute(name);
-                i.nextSibling.textContent = shape.getAttribute(name);
-            }
+            i.value = shape.getAttribute(name) || decodeTransform(shape)[name];
+            i.nextSibling.textContent = shape.getAttribute(name) || decodeTransform(shape)[name];
         });
     }
-    function getTransform(shape){
+    function getTransform(){
         var tx = transform_form.querySelector("[name='translateX']").value;
         var ty = transform_form.querySelector("[name='translateY']").value;
         var rotate = transform_form.querySelector("[name='rotate']").value;
         var scale = transform_form.querySelector("[name='scale']").value;
         return "translate(" + tx + "," + ty + ")" + " rotate(" + rotate + ") " + "scale(" + scale + ")";
+    }
+    function decodeTransform(shape){
+        var trf = shape.getAttribute("transform") || "translate(0,0) rotate(0) scale(1)";
+        var match = trf.match(/^translate\((\d+),(\d+)\)\srotate\((\d+)\)\sscale\((\d+)\)$/);
+        return {
+            translateX: match[1],
+            translateY: match[2],
+            rotate: match[3],
+            scale: match[4]
+        }
     }
 </script>
 </html>
