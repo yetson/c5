@@ -25,6 +25,10 @@
         overflow: hidden;
         box-shadow: inset 0 0 10px 10px #ddd;
     }
+    #canvas>svg{
+        border-top: 1px dashed gray;
+        border-left: 1px dashed gray;
+    }
     #canvas p{
         margin-left: 20px;
     }
@@ -68,22 +72,16 @@
     <div id="canvas">
         <p id="donghua">动画</p>
         <p>
+            <label for="">效果</label>
+            <select name="" id="animateEffect"></select>
             <label for="">类型</label>
-            <select name="" id="animateType">
-                <option value="blinds">百叶窗</option>
-            </select>
-            <label for="">方向</label>
-            <select name="" id="direction">
-                <option value="horizontal">水平方向</option>
-                <option value="vertical">竖直方向</option>
-            </select>
+            <select name="" id="animateType"></select>
             <label for="时间"></label><input type="number" id="duration" value="1">
             <button id="run">run</button>
         </p>
     </div>
 </body>
-<!-- <script src="./js/lib/TweenMax.min.js"></script>
-<script src="./js/animate.js"></script> -->
+<script src="./js/src/lib/TweenMax.min.js"></script>
 <script src="./js/dist/all.js"></script>
 <script>
     var SVG_NS = "http://www.w3.org/2000/svg",
@@ -110,7 +108,26 @@
         fill: "#0000ff"
     };
 
+    var animateInfo = {
+        blinds:{name: "百叶窗", type: ["horizontal", "vertical"]},
+        box:{name: "盒状", type: ["in", "out"]},
+        checkerboard:{name: "棋盘", type: ["across", "down"]},
+        circle:{name: "圆形扩展", type: []},
+        diamond:{name: "菱形", type: []},
+        dissolve:{name: "向内溶解", type: []},
+        fade:{name: "淡出", type: []},
+        slide:{name: "飞入", type: ["fromTop", "fromBottom", "fromLeft", "fromRight"]},
+        plus:{name: "十字形扩展", type: ["in", "out"]},
+        barn:{name: "劈裂", type: ["inVertical", "inHorizontal", "outVertical", "outHorizontal"]},
+        randomBars:{name: "随机线条", type: []},
+        strips:{name: "阶梯状", type: ["downLeft", "upLeft", "downRight", "upRight"]},
+        wedge:{name: "楔入", type: []},
+        wheel:{name: "轮子", type: [1,2,3,4,8]},
+        wipe:{name: "擦除", type: ["right", "left", "down", "up"]}
+    }
+
     var svg = createSVG();
+    createAnimate();
 
     shape_form.addEventListener('click', function(e){
         if(e.target.tagName.toLowerCase() == "button"){
@@ -145,9 +162,10 @@
     });
     run.addEventListener('click', function(e){
         if(curShape){
-            var dir = document.getElementById("direction").value;
+            var eff = document.getElementById("animateEffect").value;
+            var type = document.getElementById("animateType").value;
             var dur = document.getElementById("duration").value;
-            Animate.blinds(curShape, {direction: dir, duration: dur});
+            Animate[eff](curShape, {type: type, duration: dur});
         }
         e.preventDefault();
     });
@@ -165,8 +183,8 @@
         var svg = document.createElementNS(SVG_NS, 'svg');
         svg.setAttribute("width", "100%");
         svg.setAttribute("height", "100%");
-        svg.setAttribute("viewBox", "0 0 600 600");
-        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+        //svg.setAttribute("viewBox", "0 0 600 600");
+        //svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
         canvas.appendChild(svg);
         svg.addEventListener("click", function(e){
             if(e.target.tagName.toLowerCase() in shapeInfo){
@@ -176,9 +194,31 @@
         return svg;
     }
 
+    function createAnimate(){
+        var effect = document.querySelector("#animateEffect");
+        var type = document.querySelector("#animateType");
+        var options = "", i;
+        for(i in animateInfo){
+             options += `<option value="${i}">${animateInfo[i].name}</option>`;
+        }
+        effect.innerHTML = options;
+        type.innerHTML = animateInfo[effect[0].value].type.map(function(t){
+            return `<option value="${t}">${t}</option>`;
+        }).join("");
+        effect.addEventListener("input", function(e){
+            var opts = "", i;
+            animateInfo[effect.value].type.forEach(function(t){
+                opts += `<option value="${t}">${t}</option>`;
+            });
+            type.innerHTML = opts;
+        });
+    }
+
     function createShape(shapeName){
         var sp = document.createElementNS(SVG_NS, shapeName);
         var svgEl = document.createElementNS(SVG_NS, 'svg');
+        // svgEl.setAttribute("width", "100%");
+        // svgEl.setAttribute("height", "100%");
         for(attr in shapeInfo[shapeName]){
             sp.setAttribute(attr, shapeInfo[shapeName][attr]);
         }
@@ -195,7 +235,7 @@
         updateSet(shape);
     }
     function updateSet(shape){
-        [].map.call(document.getElementsByTagName("input"), function(i){
+        [].map.call(document.querySelector(".left-nav").getElementsByTagName("input"), function(i){
             var name = i.getAttribute('name');
             i.value = shape.getAttribute(name) || decodeTransform(shape)[name];
             i.nextSibling.textContent = shape.getAttribute(name) || decodeTransform(shape)[name];

@@ -11,7 +11,7 @@ gulp.task("default", ['test', 'build', 'server'], function () {
 });
 
 gulp.task('build', function(){
-    gulp.src("./js/src/**/*.js")
+    gulp.src("./js/src/*.js")
         .pipe(sourcemaps.init())
         .pipe(babel())
         .pipe(uglify())
