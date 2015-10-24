@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SVG-Editor</title>
+    <title>SVG-Animation</title>
 </head>
 <style>
     html,body{
@@ -20,7 +20,7 @@
         border-bottom: 1px solid gray;
     }
     #canvas{
-        width: 80%;
+        width: 87%;
         height: 100%;
         overflow: hidden;
         box-shadow: inset 0 0 10px 10px #ddd;
@@ -46,6 +46,7 @@
                     <button value="rect">rect</button>
                     <button value="circle">circle</button>
                     <button value="ellipse">ellipse</button>
+                    <button value="path">path</button>
                 </p>
             </form>
             <form id="svg-style">
@@ -100,7 +101,8 @@
         "line": {x1: "200", y1: "300", x2: "400", y2: "300"},
         "rect": {x: "200", y: "250", width: "200", height: "100"},
         "circle": {cx: "300", cy: "300", r: "50"},
-        "ellipse": {cx: "300", cy: "300", rx: "100", ry: "50"}
+        "ellipse": {cx: "300", cy: "300", rx: "100", ry: "50"},
+        "path": {x: "100", y: "100", d: "M171,145 L118,251 L186,167 L221,331 L185,365 L171,145z"}
     };
 
     var defaultAttr = {
@@ -112,8 +114,8 @@
         blinds:{name: "百叶窗", type: ["horizontal", "vertical"]},
         box:{name: "盒状", type: ["in", "out"]},
         checkerboard:{name: "棋盘", type: ["across", "down"]},
-        circle:{name: "圆形扩展", type: []},
-        diamond:{name: "菱形", type: []},
+        circle:{name: "圆形扩展", type: ["in", "out"]},
+        diamond:{name: "菱形", type: ["in", "out"]},
         dissolve:{name: "向内溶解", type: []},
         fade:{name: "淡出", type: []},
         slide:{name: "飞入", type: ["fromTop", "fromBottom", "fromLeft", "fromRight"]},
