@@ -4,13 +4,14 @@
   "description": "npm install  gulp",
   "main": "gulpfile.js",
   "dependencies": {
-    "browser-sync": "^2.9.11",
-    "gulp-babel": "^5.3.0",
+    "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.6.0",
+    "gulp-babel": "^5.3.0",
+    "gulp-uglify": "^1.4.2",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
-    "gulp-uglify": "^1.4.2",
-    "gulp": "^3.9.0"
+    "gulp": "^3.9.0",
+    "browser-sync": "^2.9.11"
   },
   "devDependencies": {},
   "scripts": {
@@ -20,6 +21,9 @@
     "type": "git",
     "url": "git+https://github.com/yetson/c5.git"
   },
+  "keywords": [
+    "yicheng"
+  ],
   "author": "yicheng",
   "license": "ISC",
   "bugs": {

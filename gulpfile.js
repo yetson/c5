@@ -5,16 +5,17 @@ var rename = require("gulp-rename");
 var concat = require("gulp-concat");
 var uglify = require("gulp-uglify");
 var browserSync =require('browser-sync').create();
+var browserify = require("gulp-browserify");
 
 gulp.task("default", ['test', 'build', 'server'], function () {
     gulp.watch("./js/src/**/*.js", ['build']);
 });
 
 gulp.task('build', function(){
-    gulp.src("./js/src/*.js")
+    gulp.src(["./js/src/mask.js", "./js/src/animate.js", "./js/src/init.js"])
         .pipe(sourcemaps.init())
         .pipe(babel())
-        .pipe(uglify())
+        //.pipe(uglify())
         .pipe(concat("all.js"))
         .pipe(sourcemaps.write("."))
         .pipe(gulp.dest("./js/dist"));

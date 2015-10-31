@@ -13,48 +13,30 @@
     }
 </style>
 <body>
-    <svg width="100%" height="100%">
-        <defs>
-              <pattern id="mask_pattern" patternUnits="userSpaceOnUse" x="0" y="0" width="600" height="120">
-                    <rect x='0' y='0' width="600" height="120" style="stroke: none; fill: url(#gradient1)" />
-              </pattern>
-              <mask id="mask1" maskUnits="userSpaceOnUse" x="0" y="0">
-                <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%" spreadMethod="pad">
-                <stop offset="0%"   stop-color="#ffffff" stop-opacity="1"/>
-                <stop offset="90%"  stop-color="#ffffff" stop-opacity="1"/>
-                <stop offset="100%" stop-color="#000000" stop-opacity="1"/>
-              </linearGradient>
-              <rect x="0" y="0" height="100%" width="100%" fill="url(#mask_pattern)" />
-              </mask>
-        </defs>
-
-        <svg x="100" y="100" mask="url(#mask1)">
-            <rect x="0" y="0" width="600" height="600"
-                style="stroke: none; fill: #0000ff">
-        </svg>
-
-        <svg x="123" y="123">
-            <defs>
-              <pattern id="pattern1"
-                     x="10" y="10" width="20" height="20"
-                     patternUnits="userSpaceOnUse" >
-
-                  <circle cx="10" cy="10" r="10" style="stroke: none; fill: #999999" />
-              </pattern>
-
-              <mask id="mask5" x="0" y="0" width="200" height="100" >
-                <rect x="0" y="0"  width="200" height="100"
-                    style="stroke:none; fill: url(#pattern1)"/>
-              </mask>
-            </defs>
-
-            <text x="10" y="55" style="stroke: none; fill: #000000;">
-                This text is under the rectangle
-            </text>
-            <rect x="1" y="1" width="200" height="100"
-                style="stroke: none; fill: #0000ff; mask: url(#mask5)"/>
-        </svg>
-    </svg>
+    <!-- <svg width="100%" height="100%">
+      <svg>
+        <mask id='circle' maskUnits="userSpaceOnUse">
+            <g id='circle-shape' transform-origin="center center">
+              <ellipse cx='50%' cy="50%" rx="71%" ry="71%" fill="#ffffff"></ellipse>
+            </g>
+        </mask>
+        <rect width='600' height='300' mask='url(#circle)'>
+        </rect>
+      </svg>
+  </svg> -->
+  <svg>
+    <!--<ellipse cx='${mx}' cy='${my}' rx='${Math.sqrt(2) * svgWidth/2}' ry='${Math.sqrt(2)*svgHeight/2}' fill="#ffffff"></ellipse> -->
+    <mask id='circle'>
+        <g id='circle-shape' transform-origin="center center">
+        <ellipse cx='50%' cy="50%" rx="70.7%" ry="70.7%" fill="#ffffff">
+        </g>
+    </mask>
+    <rect width='400' height='300' mask='url(#circle)'>
+    </rect>
+</svg>
 </body>
 <script src="./js/src/lib/TweenMax.min.js"></script>
+<script>
+TweenMax.fromTo("#circle-shape", 5, { scale: 0 }, {scale : 1 })
+</script>
 </html>
